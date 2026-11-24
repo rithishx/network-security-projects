@@ -1,0 +1,118 @@
+! show running-config - R2
+! Exported from enterprise-network.pkt (Cisco Packet Tracer)
+!
+!
+version 12.2
+no service timestamps log datetime msec
+no service timestamps debug datetime msec
+no service password-encryption
+!
+hostname R2
+!
+!
+!
+!
+!
+!
+!
+!
+ip cef
+no ipv6 cef
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface FastEthernet0/0
+ ip address 192.168.5.1 255.255.255.0
+ ip nat inside
+ duplex auto
+ speed auto
+!
+interface FastEthernet1/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Serial2/0
+ ip address 192.168.2.1 255.255.255.0
+ ip nat inside
+!
+interface Serial3/0
+ ip address 192.168.1.4 255.255.255.0
+ ip nat inside
+!
+interface FastEthernet4/0
+ no ip address
+ shutdown
+!
+interface FastEthernet5/0
+ no ip address
+ shutdown
+!
+interface FastEthernet6/0
+ no ip address
+ duplex auto
+ speed auto
+!
+interface Serial8/0
+ ip address 222.223.50.1 255.255.255.0
+ ip nat outside
+ clock rate 2000000
+!
+router ospf 1
+ log-adjacency-changes
+ redistribute bgp 100 subnets
+ network 192.168.2.0 0.0.0.255 area 0
+ network 192.168.1.0 0.0.0.255 area 0
+ network 192.168.5.0 0.0.0.255 area 0
+!
+router bgp 100
+ bgp log-neighbor-changes
+ no synchronization
+ neighbor 222.223.50.2 remote-as 200
+ network 222.223.50.0
+ redistribute ospf 1
+!
+ip nat inside source list 101 interface Serial8/0 overload
+ip nat inside source static 192.168.1.2 222.223.50.10
+ip nat inside source static 192.168.1.3 222.223.50.11
+ip classless
+!
+ip flow-export version 9
+!
+!
+access-list 101 deny ip 172.16.0.0 0.0.255.255 172.16.0.0 0.0.0.255
+access-list 101 permit ip 172.16.0.0 0.0.255.255 any
+!
+!
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 4
+ login
+!
+!
+!
+end
